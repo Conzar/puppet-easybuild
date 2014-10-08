@@ -1,4 +1,4 @@
-class UNILU-easybuild {
+class easybuild {
 
         Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
