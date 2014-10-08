@@ -1,51 +1,59 @@
 class easybuild {
-	
-	exec { 'install-eb':
-		user => 'swuser',
-		command => 'cd && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py',
-		unless => 'test -d /opt/apps/EasyBuild',
-		require => [ Package [ 'GitPython' ],
-			File [ '/opt/apps' ],
-			User [ 'swuser' ],
-			]
-	}
 
-	package { 'GitPython':
-                ensure => latest,
+        Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
+
+        exec { 'install-eb':
+                user => 'swuser',
+                command => 'cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py',
+		creates => "/opt/apps/EasyBuild",
+                require => [ File [ '/opt' ],
+                        User [ 'swuser' ],
+                        Package [ 'environment-modules' ],
+                        ]
         }
 
-	File { '/opt/apps':
-		ensure => directory,
-		mode => '0777',
-	}
+        file { '/opt':
+                ensure => directory,
+                mode => '0777',
+        }
 
-	User { 'swuser':
-		ensure => 'present',
-	}
+        user { 'swuser':
+                ensure => 'present',
+        }
 
-	#configure eb env
-	file { '/etc/profile.d/easybuild.sh':
-		ensure => file,
-		owner => 'swuser',
-		source => "/tmp/eb_config/easybuild.sh",
-		require => exec [ 'Git' ],
-	}
+        package { 'environment-modules':
+                ensure => latest,
+                before => Exec [ 'moduleInit' ],
+        }
 
-	exec { 'Git':
-		# Commande temporaire : pas sur qu'on garde l'avantage de Git : la commande telecharge tout ou juste ce qui differe ? A verifier
-		# Pour le moment dans tmp, a changer pour conserver le repo git
-		command => 'cd /tmp/eb_config && git fetch origin --all && git reset --hard origin/master',
-		require => exec [ 'GitInit' ],
-	}
+        exec { 'moduleInit':
+                user => 'swuser',
+                command => "bash -c '. /usr/share/Modules/init/bash'",
+        }
 
-	exec { 'GitIni':
-		command => 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild.git .',
-		unless => 'test -d /tmp/eb_config/.git',
-		require => File [ '/tmp/eb_config' ],
-	}
+        #configure eb env
+        file { '/etc/profile.d/easybuild.sh':
+                ensure => file,
+                owner => 'swuser',
+                source => "/tmp/eb_config/easybuild.sh",
+                require => Exec [ 'Git' ],
+        }
 
-	File { '/tmp/eb_config':
-		ensure => directory,
-		mode => '0777',
-	}
+        exec { 'Git':
+                # On pull, on n'a pas peur d'avoir de probleme de merge car a priori les serveurs ne modifient pas localement le fichier
+                command => 'cd /tmp/eb_config && git pull origin master',
+                require => Exec [ 'GitInit' ],
+        }
+
+        exec { 'GitInit':
+                command => 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild.git .',
+                creates => "/tmp/eb_config/.git",
+                require => File [ '/tmp/eb_config' ],
+        }
+
+        file { '/tmp/eb_config':
+                ensure => directory,
+                mode => '0777',
+        }
 }
+
