@@ -30,7 +30,7 @@ class easybuild {
 
         package { 'environment-modules':
                 ensure => latest,
-		require => User [ 'swuser' ],
+		install_options => [ '-t', 'wheezy-backports' ],
         }
 
         #configure eb env
