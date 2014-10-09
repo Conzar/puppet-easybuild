@@ -3,9 +3,10 @@ class easybuild {
         Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
         exec { 'install-eb':
-                user => 'swuser',
+                user    => 'swuser',
                 command => 'cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py',
 		creates => "/opt/apps/EasyBuild",
+		umask   => '0777',
                 require => [ File [ '/opt' ],
                         User [ 'swuser' ],
                         Package [ 'environment-modules' ],
