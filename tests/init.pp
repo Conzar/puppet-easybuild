@@ -1,1 +1,1 @@
-include UNILU-easybuild
+include easybuild
