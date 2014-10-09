@@ -6,7 +6,7 @@ class easybuild {
                 user    => 'swuser',
                 command => 'cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py',
 		creates => "/opt/apps/EasyBuild",
-		umask   => '0777',
+		umask   => '0000',
                 require => [ File [ '/opt' ],
                         User [ 'swuser' ],
                         Package [ 'environment-modules' ],
