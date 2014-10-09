@@ -25,13 +25,14 @@ class easybuild {
 
         package { 'environment-modules':
                 ensure => latest,
+		install_options => '-t wheezy-backports',
         }
 
         #configure eb env
         file { '/etc/profile.d/easybuild.sh':
-                ensure => file,
-                owner => 'swuser',
-                source => "/tmp/eb_config/easybuild.sh",
+                ensure  => file,
+		owner => 'swuser',
+                source  => "/tmp/eb_config/easybuild.sh",
                 require => Exec [ 'Git' ],
         }
 
@@ -44,7 +45,7 @@ class easybuild {
 
         exec { 'GitInit':
 		user => 'swuser',
-                command => "bash -c 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild.git .'",
+                command => "bash -c 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild-config.git .'",
                 creates => "/tmp/eb_config/.git",
                 require => File [ '/tmp/eb_config' ],
         }
