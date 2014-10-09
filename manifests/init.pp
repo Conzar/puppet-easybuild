@@ -9,7 +9,7 @@ class easybuild {
 		umask   => '022',
                 require => [ File [ '/opt' ],
                         User [ 'swuser' ],
-                        Package [ 'environment-modules' ],
+                        Package [ 'Lmod' ],
                         ]
         }
 
@@ -23,10 +23,14 @@ class easybuild {
                 ensure => 'present',
         }
 
-        package { 'environment-modules':
-                ensure => latest,
-		install_options => [ '-t', 'wheezy-backports' ],
+        package { 'Lmod':
+                ensure => 'installed',
+		require => Package [ 'lua5.2' ],
         }
+
+	package { 'lua5.2':
+		ensure => 'installed',
+	}
 
         #configure eb env
         file { '/etc/profile.d/easybuild.sh':
