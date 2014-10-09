@@ -25,7 +25,7 @@ class easybuild {
 
         package { 'environment-modules':
                 ensure => latest,
-		install_options => '-t wheezy-backports',
+		install_options => [ '-t', 'wheezy-backports' ],
         }
 
         #configure eb env
