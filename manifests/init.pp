@@ -6,7 +6,7 @@ class easybuild {
                 user    => 'swuser',
                 command => "bash -c '. /usr/share/?odules/init/bash && cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py'",
 		creates => "/opt/apps/EasyBuild",
-		umask   => '0000',
+		umask   => '022',
                 require => [ File [ '/opt' ],
                         User [ 'swuser' ],
                         Package [ 'environment-modules' ],
@@ -15,7 +15,8 @@ class easybuild {
 
         file { '/opt':
                 ensure => directory,
-                mode => '0777',
+		owner => 'swuser',
+		require => User [ 'swuser' ],
         }
 
         user { 'swuser':
@@ -24,7 +25,6 @@ class easybuild {
 
         package { 'environment-modules':
                 ensure => latest,
-		require => User [ 'swuser' ],
         }
 
         #configure eb env
@@ -32,7 +32,7 @@ class easybuild {
                 ensure => file,
                 owner => 'swuser',
                 source => "/tmp/eb_config/easybuild.sh",
-                require => [ Exec [ 'Git' ], User [ 'swuser' ] ],
+                require => Exec [ 'Git' ],
         }
 
         exec { 'Git':
@@ -51,7 +51,8 @@ class easybuild {
 
         file { '/tmp/eb_config':
                 ensure => directory,
-                mode => '0777',
+		owner => 'swuser',
+		require => User [ 'swuser' ],
         }
 }
 
