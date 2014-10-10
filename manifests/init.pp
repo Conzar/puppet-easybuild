@@ -25,8 +25,28 @@ class easybuild {
         package { 'Lmod':
 		ensure          => 'installed',
 		install_options => '--enablerepo=epel-testing',
-		require         => Package [ 'lua' ],
+		require         => [ Package [ 'lua-term' ], Package [ 'lua-filesystem'], Package [ 'lua-posix' ], Package [ 'lua-json' ] ],
         }
+
+	package { 'lua-term':
+		ensure  => installed,
+		require => Package [ 'lua' ],
+	}
+
+	package { 'lua-filesystem':
+		ensure  => installed,
+		require => Package [ 'lua' ],
+	}
+
+	package { 'lua-posix':
+		ensure  => installed,
+		require => Package [ 'lua' ],
+	}
+
+	package { 'lua-json':
+		ensure  => installed,
+		require => Package [ 'lua' ],
+	}
 
 	package { 'lua':
 		ensure => 'installed',
