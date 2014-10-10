@@ -38,13 +38,13 @@ class easybuild {
 	# On pull, on n'a pas peur d'avoir de probleme de merge car a priori les serveurs ne modifient pas localement le fichier
         exec { 'Git':
 		user    => 'swuser',
-		command => "bash -c 'cd /tmp/eb_config && git pull origin master'",
+		command => "bash -c 'cd /tmp/eb_config && git checkout feature/Lmod && git pull origin feature/Lmod'",
 		require => Exec [ 'GitInit' ],
 	}
 
         exec { 'GitInit':
 		user    => 'swuser',
-		command => "bash -c 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild-config.git .'",
+		command => "bash -c 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild-config.git . && git checkout feature/Lmod'",
 		creates => "/tmp/eb_config/.git",
 		require => File [ '/tmp/eb_config' ],
 	}
