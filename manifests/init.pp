@@ -34,7 +34,9 @@ class easybuild {
 
 			package { 'environment-modules':
 				ensure          => 'installed',
+				responsefile    => "/tmp/eb_config/libc6.preseed",
 				install_options => [ '-t', 'jessie' ],
+				require         => Exec [ 'Git' ],
 			}
 		}
 	}
