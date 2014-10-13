@@ -40,7 +40,7 @@ class easybuild {
 				before          => Exec [ 'module-bash-completion' ],
 			}
 
-			Exec { 'module-bash-completion':
+			exec { 'module-bash-completion':
 				command => "sed -i 's/\/usr\/share\/modules\/3.2.10\/bin\/modulecmd/\/usr\/bin\/modulecmd/g' /etc/bash_completion.d/modules",
 			}
 		}
