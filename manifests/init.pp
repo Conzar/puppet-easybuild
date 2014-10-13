@@ -26,7 +26,7 @@ class easybuild {
 		'Debian': {
 			exec  { 'install-eb':
 				user    => 'swuser',
-				command => "bash -c 'source /usr/share/lmod/lmod/init/profile && cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py'",
+				command => "bash -c 'source /usr/share/?odules/init/bash && cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py'",
 				creates => "/opt/apps/EasyBuild",
 				umask   => '022',
 				require => [ File [ '/opt' ], User [ 'swuser' ], Package [ 'environment-modules' ] ],
