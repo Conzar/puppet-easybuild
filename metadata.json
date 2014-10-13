@@ -1,0 +1,19 @@
+{
+  "name": "UNILU-easybuild",
+  "version": "0.1.0",
+  "author": "Maxime Schmitt",
+  "license": "No License",
+  "summary": "Module that installs and configure environment modules (using Lmod on CentOS and environment-modules on Debian) and EasyBuild",
+  "source": "https://github.com/sylmarien/puppet-easybuild",
+  "tags": ["EasyBuild", "Lmod", "environment-modules"],
+  "operatingsystem_support": [
+    {
+      "operatingsystem":"CentOS",
+      "operatingsystemrelease":[ "7.0" ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [ "7.6" ]
+    }
+  ]
+}
