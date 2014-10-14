@@ -70,7 +70,7 @@ class easybuild::common {
     # Load the variables used in this module. Check the easybuild-params.pp file
     require easybuild::params
 
-    Exec { path => ${easybuild::params::path} }
+    Exec { path => $easybuild::params::path }
 
     #package { 'easybuild':
     #    name    => "${easybuild::params::packagename}",
@@ -83,20 +83,20 @@ class easybuild::common {
     if $easybuild::ensure == 'present' {
 
         # Prepare the log directory
-	file { "${easybuild::params::logdir}":
-	    ensure => directory,
-	    owner  => "${easybuild::params::logdir_owner}",
-	    group  => "${easybuild::params::logdir_group}",
-	    mode   => "${easybuild::params::logdir_mode}",
-	    require => Package['easybuild'],
-	}
+	#file { "${easybuild::params::logdir}":
+	#    ensure => directory,
+	#    owner  => "${easybuild::params::logdir_owner}",
+	#    group  => "${easybuild::params::logdir_group}",
+	#    mode   => "${easybuild::params::logdir_mode}",
+	#    require => Package['easybuild'],
+	#}
 
 	exec { 'install-easybuild':
 		user    => 'sw',
 		command => "bash -c 'source ${easybuild::params::moduleSource} && cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py'",
 		creates => "/opt/apps/EasyBuild",
 		umask   => '022',
-		require => [ File [ '/opt' ], User [ 'sw' ], Package [ ${easybuild::params::modulePackage} ] ],
+		require => [ File [ '/opt' ], User [ 'sw' ], Package [ $easybuild::params::modulePackage ] ],
 	}
 
 	file { '/opt':
@@ -236,9 +236,9 @@ class easybuild::common {
 # Specialization class for Debian systems
 class easybuild::debian inherits easybuild::common {
 
-	package { ${easybuild::params::modulePackage}:
+	package { "${easybuild::params::modulePackage}":
 		ensure          => installed,
-		install_options => ${easybuild::params::installOptions},
+		install_options => $easybuild::params::installOptions,
 		responsefile    => "/tmp/eb_config/libc6.preseed",
 		require         => Exec [ 'Git' ],
 		before          => Exec [ 'module-bash-completion' ],
@@ -255,9 +255,9 @@ class easybuild::debian inherits easybuild::common {
 # Specialization class for Redhat systems
 class easybuild::redhat inherits easybuild::common {
 	
-	package { ${easybuild::params::modulePackage}:
+	package { "${easybuild::params::modulePackage}":
 		ensure          => installed,
-		install_options => ${easybuild::params::installOptions},
+		install_options => $easybuild::params::installOptions,
 	}
 }
 

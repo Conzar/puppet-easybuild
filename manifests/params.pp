@@ -36,20 +36,20 @@ class easybuild::params {
     }
 
     # The Protocol used. Used by monitor and firewall class. Default is 'tcp'
-    $protocol = $easybuild_protocol ? {
-        ''      => 'tcp',
-        default => "${easybuild_protocol}",
-    }
+    #$protocol = $easybuild_protocol ? {
+    #    ''      => 'tcp',
+    #    default => "${easybuild_protocol}",
+    #}
     # The port number. Used by monitor and firewall class. The default is 22.
-    $port = $easybuild_port ? {
-        ''      => 22,
-        default => "${easybuild_port}",
-    }
+    #$port = $easybuild_port ? {
+    #    ''      => 22,
+    #    default => "${easybuild_port}",
+    #}
     # example of an array variable
-    $array_variable = $easybuild_array_variable ? {
-        ''      => [],
-        default => $easybuild_array_variable,
-    }
+    #$array_variable = $easybuild_array_variable ? {
+    #    ''      => [],
+    #    default => $easybuild_array_variable,
+    #}
 
 
     #### MODULE INTERNAL VARIABLES  #########
@@ -66,7 +66,7 @@ class easybuild::params {
     # }
 
     # Path for the commands
-    $path = $::operatinsystem ? {
+    $path = $::operatingsystem ? {
 	    'CentOS' => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/share/lmod/lmod/libexec/" ],
 	    'Debian' => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ],
     }
@@ -95,18 +95,18 @@ class easybuild::params {
     }
 
     # Log directory
-    $logdir = $::operatingsystem ? {
-        default => '/var/log/easybuild'
-    }
-    $logdir_mode = $::operatingsystem ? {
-        default => '750',
-    }
-    $logdir_owner = $::operatingsystem ? {
-        default => 'root',
-    }
-    $logdir_group = $::operatingsystem ? {
-        default => 'adm',
-    }
+    #$logdir = $::operatingsystem ? {
+    #    default => '/var/log/easybuild'
+    #}
+    #$logdir_mode = $::operatingsystem ? {
+    #    default => '750',
+    #}
+    #$logdir_owner = $::operatingsystem ? {
+    #    default => 'root',
+    #}
+    #$logdir_group = $::operatingsystem ? {
+    #    default => 'adm',
+    #}
 
     # PID for daemons
     # $piddir = $::operatingsystem ? {
