@@ -46,7 +46,7 @@ inherits easybuild::params
 {
     info ("Configuring easybuild (with ensure = ${ensure})")
 
-    if ! ($ensure in [ 'present', 'absent' ]) {
+    if !($ensure in [ 'present', 'absent' ]) {
         fail("easybuild 'ensure' parameter must be set to either 'absent' or 'present'")
     }
 
@@ -70,10 +70,12 @@ class easybuild::common {
     # Load the variables used in this module. Check the easybuild-params.pp file
     require easybuild::params
 
-    package { 'easybuild':
-        name    => "${easybuild::params::packagename}",
-        ensure  => "${easybuild::ensure}",
-    }
+    Exec { path => ${easybuild::params::path} }
+
+    #package { 'easybuild':
+    #    name    => "${easybuild::params::packagename}",
+    #    ensure  => "${easybuild::ensure}",
+    #}
     # package { $easybuild::params::extra_packages:
     #     ensure => 'present'
     # }
@@ -81,13 +83,60 @@ class easybuild::common {
     if $easybuild::ensure == 'present' {
 
         # Prepare the log directory
-        file { "${easybuild::params::logdir}":
-            ensure => 'directory',
-            owner  => "${easybuild::params::logdir_owner}",
-            group  => "${easybuild::params::logdir_group}",
-            mode   => "${easybuild::params::logdir_mode}",
-            require => Package['easybuild'],
-        }
+	file { "${easybuild::params::logdir}":
+	    ensure => directory,
+	    owner  => "${easybuild::params::logdir_owner}",
+	    group  => "${easybuild::params::logdir_group}",
+	    mode   => "${easybuild::params::logdir_mode}",
+	    require => Package['easybuild'],
+	}
+
+	exec { 'install-easybuild':
+		user    => 'sw',
+		command => "bash -c 'source ${easybuild::params::moduleSource} && cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py'",
+		creates => "/opt/apps/EasyBuild",
+		umask   => '022',
+		require => [ File [ '/opt' ], User [ 'sw' ], Package [ ${easybuild::params::modulePackage} ] ],
+	}
+
+	file { '/opt':
+		ensure  => directory,
+		owner   => 'sw',
+		require => User [ 'sw' ],
+	}
+
+	user { 'sw':
+		ensure     => present,
+		home       => '/home/sw',
+		managehome => true,
+	}
+
+	# Configure environment variables for the module command
+	file { '/etc/profile.d/easybuild.sh':
+		ensure  => file,
+		owner   => 'sw',
+		source  => "/tmp/eb_config/easybuild.sh",
+		require => Exec [ 'Git' ],
+	}
+
+	exec { 'Git':
+		user    => 'sw',
+		command => "bash -c 'cd /tmp/eb_config && git checkout ${branch} && git pull origin ${branch}'",
+		require => Exec [ 'GitInit' ],
+	}
+
+	exec { 'GitInit':
+		user    => 'sw',
+		command => "bash -c 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild-config.git . && git checkout ${branch}'",
+		creates => "/tmp/eb_config/.git",
+		require => File [ '/tmp/eb_config' ],
+	}
+
+	file { '/tmp/eb_config':
+		ensure  => directory,
+		owner   => 'sw',
+		require => User [ 'sw' ],
+	}
 
         # Configuration file
         # file { "${easybuild::params::configdir}":
@@ -98,20 +147,20 @@ class easybuild::common {
         #     require => Package['easybuild'],
         # }
         # Regular version using file resource
-        file { 'easybuild.conf':
-            path    => "${easybuild::params::configfile}",
-            owner   => "${easybuild::params::configfile_owner}",
-            group   => "${easybuild::params::configfile_group}",
-            mode    => "${easybuild::params::configfile_mode}",
-            ensure  => "${easybuild::ensure}",
+	#file { 'easybuild.conf':
+	#    path    => "${easybuild::params::configfile}",
+	#    owner   => "${easybuild::params::configfile_owner}",
+	#    group   => "${easybuild::params::configfile_group}",
+	#    mode    => "${easybuild::params::configfile_mode}",
+	#    ensure  => "${easybuild::ensure}",
             #content => template("easybuild/easybuildconf.erb"),
             #source => "puppet:///modules/easybuild/easybuild.conf",
             #notify  => Service['easybuild'],
-            require => [
+	    #require => [
                         #File["${easybuild::params::configdir}"],
-                        Package['easybuild']
-                        ],
-        }
+			#           Package['easybuild']
+	    #],
+	#}
 
         # # Concat version
         # include concat::setup
@@ -147,30 +196,30 @@ class easybuild::common {
         #     mode    => "${easybuild::params::piddir_mode}",
         # }
 
-        file { "${easybuild::params::configfile_init}":
-            owner   => "${easybuild::params::configfile_owner}",
-            group   => "${easybuild::params::configfile_group}",
-            mode    => "${easybuild::params::configfile_mode}",
-            ensure  => "${easybuild::ensure}",
-            #content => template("easybuild/default/easybuild.erb"),
+	#file { "${easybuild::params::configfile_init}":
+	#    owner   => "${easybuild::params::configfile_owner}",
+	#    group   => "${easybuild::params::configfile_group}",
+	#    mode    => "${easybuild::params::configfile_mode}",
+	#    ensure  => "${easybuild::ensure}",
+	    #content => template("easybuild/default/easybuild.erb"),
             #source => "puppet:///modules/easybuild/default/easybuild.conf",
-            notify  =>  Service['easybuild'],
-            require =>  Package['easybuild']
-        }
+	    #    notify  =>  Service['easybuild'],
+	    # require =>  Package['easybuild']
+	    #}
 
-        service { 'easybuild':
-            name       => "${easybuild::params::servicename}",
-            enable     => true,
-            ensure     => running,
-            hasrestart => "${easybuild::params::hasrestart}",
-            pattern    => "${easybuild::params::processname}",
-            hasstatus  => "${easybuild::params::hasstatus}",
-            require    => [
-                           Package['easybuild'],
-                           File["${easybuild::params::configfile_init}"]
-                           ],
-            subscribe  => File['easybuild.conf'],
-        }
+	    #service { 'easybuild':
+	    #name       => "${easybuild::params::servicename}",
+	    #enable     => true,
+	    #ensure     => running,
+	    #hasrestart => "${easybuild::params::hasrestart}",
+	    #pattern    => "${easybuild::params::processname}",
+	    #hasstatus  => "${easybuild::params::hasstatus}",
+	    #require    => [
+	    #               Package['easybuild'],
+	    #               File["${easybuild::params::configfile_init}"]
+	    #               ],
+	    #subscribe  => File['easybuild.conf'],
+	    #}
     }
     else
     {
@@ -185,13 +234,32 @@ class easybuild::common {
 # = Class: easybuild::debian
 #
 # Specialization class for Debian systems
-class easybuild::debian inherits easybuild::common { }
+class easybuild::debian inherits easybuild::common {
+
+	package { ${easybuild::params::modulePackage}:
+		ensure          => installed,
+		install_options => ${easybuild::params::installOptions},
+		responsefile    => "/tmp/eb_config/libc6.preseed",
+		require         => Exec [ 'Git' ],
+		before          => Exec [ 'module-bash-completion' ],
+	}
+
+	exec { 'module-bash-completion':
+		command => "sed -i 's/\/usr\/share\/modules\/3.2.10\/bin\/modulecmd/\/usr\/bin\/modulecmd/g' /etc/bash_completion.d/modules",
+	}
+}
 
 # ------------------------------------------------------------------------------
 # = Class: easybuild::redhat
 #
 # Specialization class for Redhat systems
-class easybuild::redhat inherits easybuild::common { }
+class easybuild::redhat inherits easybuild::common {
+	
+	package { ${easybuild::params::modulePackage}:
+		ensure          => installed,
+		install_options => ${easybuild::params::installOptions},
+	}
+}
 
 
 
