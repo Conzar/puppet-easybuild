@@ -111,6 +111,11 @@ class easybuild::common {
 		managehome => true,
 	}
 
+	package { "${easybuild::params::modulePackage}":
+		ensure          => present,
+		install_options => $easybuild::params::installOptions,
+	}
+
 	# Configure environment variables for the module command
 	file { '/etc/profile.d/easybuild.sh':
 		ensure  => file,
@@ -237,8 +242,6 @@ class easybuild::common {
 class easybuild::debian inherits easybuild::common {
 
 	package { "${easybuild::params::modulePackage}":
-		ensure          => installed,
-		install_options => $easybuild::params::installOptions,
 		responsefile    => "/tmp/eb_config/libc6.preseed",
 		require         => Exec [ 'Git' ],
 		before          => Exec [ 'module-bash-completion' ],
@@ -253,13 +256,7 @@ class easybuild::debian inherits easybuild::common {
 # = Class: easybuild::redhat
 #
 # Specialization class for Redhat systems
-class easybuild::redhat inherits easybuild::common {
-	
-	package { "${easybuild::params::modulePackage}":
-		ensure          => installed,
-		install_options => $easybuild::params::installOptions,
-	}
-}
+class easybuild::redhat inherits easybuild::common {}
 
 
 
