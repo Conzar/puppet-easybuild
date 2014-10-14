@@ -72,6 +72,16 @@ class easybuild::common {
 
     Exec { path => $easybuild::params::path }
 
+    $localOwner = $easybuild::ensure ? {
+	    'present' => 'sw',
+	    'absent'  => 'root',
+    }
+
+    $directoryState = $easybuild::ensure ? {
+	    'present' => 'directory',
+	    'absent'  => 'absent',
+    }
+
     #package { 'easybuild':
     #    name    => "${easybuild::params::packagename}",
     #    ensure  => "${easybuild::ensure}",
@@ -92,28 +102,11 @@ class easybuild::common {
 	#}
 
 	exec { 'install-easybuild':
-		user    => 'sw',
+		user    => $localOwner,
 		command => "bash -c 'source ${easybuild::params::moduleSource} && cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py'",
 		creates => "/opt/apps/EasyBuild",
 		umask   => '022',
 		require => [ File [ '/opt' ], User [ 'sw' ], Package [ $easybuild::params::modulePackage ] ],
-	}
-
-	file { '/opt':
-		ensure  => directory,
-		owner   => 'sw',
-		require => User [ 'sw' ],
-	}
-
-	user { 'sw':
-		ensure     => present,
-		home       => '/home/sw',
-		managehome => true,
-	}
-
-	package { "${easybuild::params::modulePackage}":
-		ensure          => present,
-		install_options => $easybuild::params::installOptions,
 	}
 
 	# Configure environment variables for the module command
@@ -136,9 +129,38 @@ class easybuild::common {
 		creates => "/tmp/eb_config/.git",
 		require => File [ '/tmp/eb_config' ],
 	}
+    }
+    else {
+
+	exec { 'rm-easybuild':
+		user    => $localOwner,
+		command => "bash -c 'rm -rf /opt/apps/EasyBuild'",
+	}
+
+	file { '/etc/profile.d/easybuild.sh':
+		ensure  => absent,
+	}
+    }
+
+	file { '/opt':
+		ensure  => directory,
+		owner   => $localOwner,
+		require => User [ 'sw' ],
+	}
+
+	user { 'sw':
+		ensure     => $easybuild::ensure,
+		home       => "/home/sw",
+		managehome => true,
+	}
+
+	package { "${easybuild::params::modulePackage}":
+		ensure          => $easybuild::ensure,
+		install_options => $easybuild::params::installOptions,
+	}
 
 	file { '/tmp/eb_config':
-		ensure  => directory,
+		ensure  => $directoryState,
 		owner   => 'sw',
 		require => User [ 'sw' ],
 	}
@@ -224,14 +246,7 @@ class easybuild::common {
 	    #               File["${easybuild::params::configfile_init}"]
 	    #               ],
 	    #subscribe  => File['easybuild.conf'],
-	    #}
-    }
-    else
-    {
-        # Here $easybuild::ensure is 'absent'
-
-    }
-
+	    #
 }
 
 
@@ -241,6 +256,7 @@ class easybuild::common {
 # Specialization class for Debian systems
 class easybuild::debian inherits easybuild::common {
 
+    if $easybuild::ensure == 'present' {
 	package { "${easybuild::params::modulePackage}":
 		responsefile    => "/tmp/eb_config/libc6.preseed",
 		require         => Exec [ 'Git' ],
@@ -250,6 +266,12 @@ class easybuild::debian inherits easybuild::common {
 	exec { 'module-bash-completion':
 		command => "sed -i 's/\/usr\/share\/modules\/3.2.10\/bin\/modulecmd/\/usr\/bin\/modulecmd/g' /etc/bash_completion.d/modules",
 	}
+    }
+    else {
+	 exec { 'rm-module-bash-completion':
+		command => "bash -c 'rm /etc/bash_completion.d/modules",
+	}
+		
 }
 
 # ------------------------------------------------------------------------------
