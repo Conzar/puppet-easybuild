@@ -164,7 +164,7 @@ class easybuild::common {
 	}
 
 	file { '/tmp/eb_config':
-		ensure  => present,
+		ensure  => directory,
 		owner   => $localOwner,
 		require => User [ 'sw' ],
 	}
