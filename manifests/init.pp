@@ -82,6 +82,11 @@ class easybuild::common {
 	    'absent'  => 'absent',
     }
 
+    $packageState = $easybuild::ensure ? {
+	    'present' => 'present',
+	    'absent'  => 'purged',
+    }
+
     #package { 'easybuild':
     #    name    => "${easybuild::params::packagename}",
     #    ensure  => "${easybuild::ensure}",
@@ -154,7 +159,7 @@ class easybuild::common {
 	}
 
 	package { "${easybuild::params::modulePackage}":
-		ensure          => $easybuild::ensure,
+		ensure          => $packageState,
 		install_options => $easybuild::params::installOptions,
 	}
 
