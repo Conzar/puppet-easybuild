@@ -16,5 +16,8 @@
 #      sudo puppet apply -t /vagrant/tests/init.pp
 #
 node default {
-    include easybuild
+    class { 'easybuild':
+	    ensure => absent,
+    }
 }
+
