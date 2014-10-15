@@ -129,6 +129,12 @@ class easybuild::common {
 		creates => "/tmp/eb_config/.git",
 		require => File [ '/tmp/eb_config' ],
 	}
+
+	file { '/tmp/eb_config':
+		ensure  => $directoryState,
+		owner   => 'sw',
+		require => User [ 'sw' ],
+	}
     }
     else {
 
@@ -157,12 +163,6 @@ class easybuild::common {
 	package { "${easybuild::params::modulePackage}":
 		ensure          => $easybuild::ensure,
 		install_options => $easybuild::params::installOptions,
-	}
-
-	file { '/tmp/eb_config':
-		ensure  => $directoryState,
-		owner   => 'sw',
-		require => User [ 'sw' ],
 	}
 }
         # Configuration file
@@ -255,20 +255,21 @@ class easybuild::common {
 # Specialization class for Debian systems
 class easybuild::debian inherits easybuild::common {
 
-    package { "${easybuild::params::modulePackage}":
-	responsefile    => "/tmp/eb_config/libc6.preseed",
-	require         => Exec [ 'Git' ],
-	before          => Exec [ 'module-bash-completion' ],
-    }
-
     if $easybuild::ensure == 'present' {
+	Package [ "${easybuild::params::modulePackage}" ] {
+		responsefile => "/tmp/eb_config/libc6.preseed",
+		require      => Exec [ 'Git' ],
+		before       => Exec [ 'module-bash-completion' ],
+	}
 	exec { 'module-bash-completion':
 		command => "sed -i 's/\/usr\/share\/modules\/3.2.10\/bin\/modulecmd/\/usr\/bin\/modulecmd/g' /etc/bash_completion.d/modules",
+		onlyif  => "test -f /etc/bash_completion.d/modules",
 	}
     }
     else {
-	 exec { 'rm-module-bash-completion':
-		command => "bash -c 'rm /etc/bash_completion.d/modules",
+
+	 file { '/etc/bash_completion.d/modules':
+		 ensure => absent,
 	}
 		
     }
