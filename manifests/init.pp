@@ -129,18 +129,11 @@ class easybuild::common {
 		creates => "/tmp/eb_config/.git",
 		require => File [ '/tmp/eb_config' ],
 	}
-
-	file { '/tmp/eb_config':
-		ensure  => $directoryState,
-		owner   => 'sw',
-		require => User [ 'sw' ],
-	}
     }
     else {
 
-	exec { 'rm-easybuild':
-		user    => $localOwner,
-		command => "bash -c 'rm -rf /opt/apps/EasyBuild'",
+	notify { 'easybuild-directory':
+		message => "The /opt/apps/EasyBuild directory has not been removed since it may contain some user files.",
 	}
 
 	file { '/etc/profile.d/easybuild.sh':
@@ -163,6 +156,12 @@ class easybuild::common {
 	package { "${easybuild::params::modulePackage}":
 		ensure          => $easybuild::ensure,
 		install_options => $easybuild::params::installOptions,
+	}
+
+	file { '/tmp/eb_config':
+		ensure  => present,
+		owner   => $localOwner,
+		require => User [ 'sw' ],
 	}
 }
         # Configuration file
