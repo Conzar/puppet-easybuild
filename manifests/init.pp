@@ -164,7 +164,7 @@ class easybuild::common {
 		owner   => 'sw',
 		require => User [ 'sw' ],
 	}
-
+}
         # Configuration file
         # file { "${easybuild::params::configdir}":
         #     ensure => 'directory',
@@ -247,7 +247,6 @@ class easybuild::common {
 	    #               ],
 	    #subscribe  => File['easybuild.conf'],
 	    #
-}
 
 
 # ------------------------------------------------------------------------------
@@ -256,13 +255,13 @@ class easybuild::common {
 # Specialization class for Debian systems
 class easybuild::debian inherits easybuild::common {
 
-    if $easybuild::ensure == 'present' {
-	package { "${easybuild::params::modulePackage}":
-		responsefile    => "/tmp/eb_config/libc6.preseed",
-		require         => Exec [ 'Git' ],
-		before          => Exec [ 'module-bash-completion' ],
-	}
+    package { "${easybuild::params::modulePackage}":
+	responsefile    => "/tmp/eb_config/libc6.preseed",
+	require         => Exec [ 'Git' ],
+	before          => Exec [ 'module-bash-completion' ],
+    }
 
+    if $easybuild::ensure == 'present' {
 	exec { 'module-bash-completion':
 		command => "sed -i 's/\/usr\/share\/modules\/3.2.10\/bin\/modulecmd/\/usr\/bin\/modulecmd/g' /etc/bash_completion.d/modules",
 	}
@@ -272,6 +271,7 @@ class easybuild::debian inherits easybuild::common {
 		command => "bash -c 'rm /etc/bash_completion.d/modules",
 	}
 		
+    }
 }
 
 # ------------------------------------------------------------------------------
