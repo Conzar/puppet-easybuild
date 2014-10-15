@@ -83,7 +83,7 @@ class easybuild::common {
     }
 
     $packageState = $easybuild::ensure ? {
-	    'present' => 'present',
+	    'present' => 'latest',
 	    'absent'  => 'purged',
     }
 
