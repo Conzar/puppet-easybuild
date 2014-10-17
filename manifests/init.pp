@@ -156,6 +156,7 @@ class easybuild::common {
 		ensure     => $easybuild::ensure,
 		home       => "/home/sw",
 		managehome => true,
+    shell      => '/bin/bash',
 	}
 
 	package { "${easybuild::params::modulePackage}":
