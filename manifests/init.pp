@@ -124,13 +124,13 @@ class easybuild::common {
 
 	exec { 'Git':
 		user    => 'sw',
-		command => "bash -c 'cd /tmp/eb_config && git checkout ${branch} && git pull origin ${branch}'",
+		command => "bash -c 'cd /tmp/eb_config && git checkout ${easybuild::params::branch} && git pull origin ${easybuild::params::branch}'",
 		require => Exec [ 'GitInit' ],
 	}
 
 	exec { 'GitInit':
 		user    => 'sw',
-		command => "bash -c 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild-config.git . && git checkout ${branch}'",
+		command => "bash -c 'cd /tmp/eb_config && git clone https://github.com/sylmarien/easybuild-config.git . && git checkout ${easybuild::params::branch}'",
 		creates => "/tmp/eb_config/.git",
 		require => File [ '/tmp/eb_config' ],
 	}
