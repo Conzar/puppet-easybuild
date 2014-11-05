@@ -108,7 +108,7 @@ class easybuild::common {
 
 	exec { 'install-easybuild':
 		user    => $localOwner,
-		command => "bash -c 'source ${easybuild::params::moduleSource} && cd /tmp && wget https://raw.github.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py'",
+		command => "bash -c 'source ${easybuild::params::moduleSource} && cd /tmp && wget https://raw.githubusercontent.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py && python bootstrap_eb.py /opt/apps/EasyBuild && rm bootstrap_eb.py'",
 		creates => "/opt/apps/EasyBuild",
 		umask   => '022',
 		require => [ File [ '/opt' ], User [ 'sw' ], Package [ $easybuild::params::modulePackage ] ],
