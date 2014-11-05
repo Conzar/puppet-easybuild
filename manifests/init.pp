@@ -161,24 +161,24 @@ class easybuild::common {
 # Specialization class for Debian systems
 class easybuild::debian inherits easybuild::common {
 
-    if $easybuild::ensure == 'present' {
-	Package [ "${easybuild::params::modulePackage}" ] {
-		responsefile => "/tmp/eb_config/libc6.preseed",
-		require      => Exec [ 'Git' ],
-    #		before       => Exec [ 'module-bash-completion' ],
-	}
+  #    if $easybuild::ensure == 'present' {
+  #Package [ "${easybuild::params::modulePackage}" ] {
+  #		responsefile => "/tmp/eb_config/libc6.preseed",
+  #	require      => Exec [ 'Git' ],
+  # before       => Exec [ 'module-bash-completion' ],
+  #}
   #	exec { 'module-bash-completion':
   #		command => "sed -i 's/\\/usr\\/share\\/modules\\/3.2.10\\/bin\\/modulecmd/\\/usr\\/bin\\/modulecmd/g' /etc/bash_completion.d/modules",
   #		onlyif  => "test -f /etc/bash_completion.d/modules",
   #}
-    }
-    else {
-
-	 file { '/etc/bash_completion.d/modules':
-		 ensure => absent,
-	}
-		
-    }
+  #  }
+  #  else {
+  #
+  # file { '/etc/bash_completion.d/modules':
+  #		 ensure => absent,
+  # }
+  #		
+  #  }
 }
 
 # ------------------------------------------------------------------------------
