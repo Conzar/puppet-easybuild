@@ -35,146 +35,34 @@ class easybuild::params {
         default => "${easybuild_ensure}"
     }
 
-    # The Protocol used. Used by monitor and firewall class. Default is 'tcp'
-    #$protocol = $easybuild_protocol ? {
-    #    ''      => 'tcp',
-    #    default => "${easybuild_protocol}",
-    #}
-    # The port number. Used by monitor and firewall class. The default is 22.
-    #$port = $easybuild_port ? {
-    #    ''      => 22,
-    #    default => "${easybuild_port}",
-    #}
-    # example of an array variable
-    #$array_variable = $easybuild_array_variable ? {
-    #    ''      => [],
-    #    default => $easybuild_array_variable,
-    #}
-
-
-    #### MODULE INTERNAL VARIABLES  #########
-    # (Modify to adapt to unsupported OSes)
-    #######################################
-    # easybuild packages
-    #$packagename = $::operatingsystem ? {
-    #    default => 'easybuild',
-    #}
-    # $extra_packages = $::operatingsystem ? {
-    #     /(?i-mx:ubuntu|debian)/        => [],
-    #     /(?i-mx:centos|fedora|redhat)/ => [],
-    #     default => []
-    # }
-
     # Path for the commands
     $path = $::operatingsystem ? {
 	    'CentOS' => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/share/lmod/lmod/libexec/" ],
-	    'Debian' => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ],
+	    'Debian' => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/share/lmod/lmod/libexec/" ],
     }
 
     # Branch of the git repository to pull for the configuration file
     $branch = $::operatingsystem ? {
 	    'CentOS' => 'feature/Lmod',
-	    'Debian' => 'master',
+	    'Debian' => 'feature/Lmod',
     }
 
     # File to source (depend on the module command used)
     $moduleSource = $::operatingsystem ? {
 	    'CentOS' => '/usr/share/lmod/lmod/init/profile',
-	    'Debian' => '/usr/share/?odules/init/bash',
+	    'Debian' => '/usr/share/lmod/lmod/init/profile',
     }
 
     # Package that provide the module command
     $modulePackage = $::operatingsystem ? {
 	    'CentOS' => 'Lmod',
-	    'Debian' => 'environment-modules',
+	    'Debian' => 'lmod',
     }
 
     $installOptions = $::operatingsystem ? {
 	    'CentOS' => '--enablerepo=epel-testing',
-	    'Debian' => [ '-t', 'jessie' ],
+	    'Debian' => [ '-t', 'sid' ],
     }
-
-    # Log directory
-    #$logdir = $::operatingsystem ? {
-    #    default => '/var/log/easybuild'
-    #}
-    #$logdir_mode = $::operatingsystem ? {
-    #    default => '750',
-    #}
-    #$logdir_owner = $::operatingsystem ? {
-    #    default => 'root',
-    #}
-    #$logdir_group = $::operatingsystem ? {
-    #    default => 'adm',
-    #}
-
-    # PID for daemons
-    # $piddir = $::operatingsystem ? {
-    #     default => "/var/run/easybuild",
-    # }
-    # $piddir_mode = $::operatingsystem ? {
-    #     default => '750',
-    # }
-    # $piddir_owner = $::operatingsystem ? {
-    #     default => 'easybuild',
-    # }
-    # $piddir_group = $::operatingsystem ? {
-    #     default => 'adm',
-    # }
-    # $pidfile = $::operatingsystem ? {
-    #     default => '/var/run/easybuild/easybuild.pid'
-    # }
-
-    # easybuild associated services
-    #$servicename = $::operatingsystem ? {
-    #    /(?i-mx:ubuntu|debian)/ => 'easybuild',
-    #    default                 => 'easybuild'
-    #}
-    # used for pattern in a service ressource
-    #$processname = $::operatingsystem ? {
-    #    /(?i-mx:ubuntu|debian)/ => 'easybuild',
-    #    default                 => 'easybuild'
-    #}
-    #$hasstatus = $::operatingsystem ? {
-    #    /(?i-mx:ubuntu|debian)/        => false,
-    #    /(?i-mx:centos|fedora|redhat)/ => true,
-    #    default => true,
-    #}
-    #$hasrestart = $::operatingsystem ? {
-    #    default => true,
-    #}
-
-    # Configuration directory & file
-    # $configdir = $::operatingsystem ? {
-    #     default => "/etc/easybuild",
-    # }
-    # $configdir_mode = $::operatingsystem ? {
-    #     default => '0755',
-    # }
-    # $configdir_owner = $::operatingsystem ? {
-    #     default => 'root',
-    # }
-    # $configdir_group = $::operatingsystem ? {
-    #     default => 'root',
-    # }
-
-    #$configfile = $::operatingsystem ? {
-    #    default => '/etc/easybuild.conf',
-    #}
-    #$configfile_init = $::operatingsystem ? {
-    #    /(?i-mx:ubuntu|debian)/ => '/etc/default/easybuild',
-    #    default                 => '/etc/sysconfig/easybuild'
-    #}
-    #$configfile_mode = $::operatingsystem ? {
-    #    default => '0600',
-    #}
-    #$configfile_owner = $::operatingsystem ? {
-    #    default => 'root',
-    #}
-    #$configfile_group = $::operatingsystem ? {
-    #    default => 'root',
-    #}
-
 
 }
 
