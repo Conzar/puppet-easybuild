@@ -43,8 +43,8 @@ class easybuild::params {
 
     # Branch of the git repository to pull for the configuration file
     $branch = $::operatingsystem ? {
-	    'CentOS' => 'feature/Lmod',
-	    'Debian' => 'feature/Lmod',
+	    'CentOS' => 'master',
+	    'Debian' => 'master',
     }
 
     # File to source (depend on the module command used)
