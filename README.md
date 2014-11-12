@@ -39,6 +39,7 @@ Both these files should be put in the _files_ directory of the puppet-easybuild 
 
 This module modify the configuration of EasyBuild and Lmod to use the Thematic Module Naming Scheme.  
 It is not currently finished. The major thing to be modified is the place where the new naming scheme will be put (and modify the PYTHONPATH accordingly). It is currently put in the home directory (so the home directory of the sw user) which is not a good place (not accessible by all the users, and not sure that this home directory should be in the PYTHONPATH).  
+Also, this module still consider that the _easybuild.sh_ file is in /etc/profile.d and should be modified when this will no longer be correct.  
 When this module is completely ready, we should include the changes it does to the puppet-easybuild module.
 
 #### [puppet-softwareAutoInstall](https://github.com/sylmarien/puppet-softwareAutoInstall)
