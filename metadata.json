@@ -1,6 +1,6 @@
 {
   "name": "easybuild",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "M. Schmitt",
   "mail": "maxime.schmitt@ext.uni.lu",
   "summary": "Module that installs and configure environment modules (using Lmod on CentOS and environment-modules on Debian) and EasyBuild",
