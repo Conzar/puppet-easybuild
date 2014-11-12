@@ -52,4 +52,4 @@ Either this module should be included or not in the puppet-easybuild module is o
 #### [easybuild-modules](https://github.com/sylmarien/easybuild-modules)
 
 This module contains the python script that implements the automatic installation of a set of software defined in a YAML file, and a example YAML file to show an example of software set definition.  
-This module should be included in the previous module as a submodule in the _files_ directory.
+This module should be included in the previous module as a submodule in the _files_ directory. (Currently, a copy of the files is in the _files_ directory of the puppet-softwareAutoInstall module)
