@@ -43,6 +43,7 @@ class easybuild(
     $ensure = $easybuild::params::ensure
 )
 inherits easybuild::params {
+  anchor{'easybuild::begin':}
   info ("Configuring easybuild (with ensure = ${ensure})")
 
   if !($ensure in [ 'present', 'absent' ]) {
@@ -50,11 +51,9 @@ inherits easybuild::params {
   "easybuild 'ensure' parameter must be set to either 'absent' or 'present'")
   }
 
-  case $::operatingsystem {
-    debian, ubuntu:         { include easybuild::debian }
-    redhat, fedora, centos: { include easybuild::redhat }
-    default: {
-      fail("Module ${module_name} is not supported on ${operatingsystem}")
-    }
+  class{'easybuild::common':}
+
+  anchor{'easybuild::end':
+    require => Class['easybuild::common'],
   }
 }

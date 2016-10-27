@@ -36,36 +36,50 @@ class easybuild::params {
   }
 
   # Path for the commands
-  $path = $::operatingsystem ? {
-    'CentOS' => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/',
+  $path = $::osfamily ? {
+    'redhat' => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/',
     '/usr/share/lmod/lmod/libexec/'
     ],
-    'Debian' => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/',
+    'debian' => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/',
     '/usr/share/lmod/lmod/libexec/'
     ],
   }
 
   # Branch of the git repository to pull for the configuration file
-  $branch = $::operatingsystem ? {
-    'CentOS' => 'master',
-    'Debian' => 'master',
+  $branch = $::osfamily ? {
+    'redhat' => 'master',
+    'debian' => 'master',
   }
 
   # File to source (depend on the module command used)
-  $moduleSource = $::operatingsystem ? {
-    'CentOS' => '/usr/share/lmod/lmod/init/profile',
-    'Debian' => '/usr/share/lmod/lmod/init/profile',
+  $moduleSource = $::osfamily ? {
+    'redhat' => '/usr/share/lmod/lmod/init/profile',
+    'debian' => '/usr/share/lmod/lmod/init/profile',
   }
 
   # Package that provide the module command
-  $modulePackage = $::operatingsystem ? {
-    'CentOS' => 'Lmod',
-    'Debian' => 'lmod',
+  $modulePackage = $::osfamily ? {
+    'redhat' => 'Lmod',
+    'debian' => 'lmod',
   }
 
-  $installOptions = $::operatingsystem ? {
-    'CentOS' => '--enablerepo=epel-testing',
-    'Debian' => [ '-t', 'sid' ],
+  $installOptions = $::osfamily ? {
+    'redhat' => '--enablerepo=epel-testing',
+    #'debian' => [ '-t', 'sid' ],
+    'debian' => [ ],
+  }
+
+  # OS Specific Requirements
+  case $::osfamily {
+    'redhat': {
+      $required_packages = []
+    }
+    'debian': {
+      $required_packages = ['tcl-dev','git']
+    }
+    default: {
+      fail("Unsupported OS ${::osfamily}.  Please use a debian or \
+redhat based system")
+    }
   }
 }
-

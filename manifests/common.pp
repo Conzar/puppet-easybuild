@@ -33,6 +33,8 @@ class easybuild::common {
     $bootstrap_url = "https://raw.githubusercontent.com/hpcugent/easybuild-\
 framework/develop/easybuild/scripts/${bootstrap_file}"
 
+    ensure_packages($easybuild::params::required_packages)
+
     exec { 'install-easybuild':
       user    => $localOwner,
       command => "bash -c 'source ${easybuild::params::moduleSource} &&\
