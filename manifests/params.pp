@@ -24,45 +24,48 @@
 #
 class easybuild::params {
 
-    ######## DEFAULTS FOR VARIABLES USERS CAN SET ##########################
-    # (Here are set the defaults, provide your custom variables externally)
-    # (The default used is in the line with '')
-    ###########################################
+  ######## DEFAULTS FOR VARIABLES USERS CAN SET ##########################
+  # (Here are set the defaults, provide your custom variables externally)
+  # (The default used is in the line with '')
+  ###########################################
 
-    # ensure the presence (or absence) of easybuild
-    $ensure = $easybuild_ensure ? {
-        ''      => 'present',
-        default => "${easybuild_ensure}"
-    }
+  # ensure the presence (or absence) of easybuild
+  $ensure = $easybuild_ensure ? {
+    ''      => 'present',
+    default => $easybuild_ensure
+  }
 
-    # Path for the commands
-    $path = $::operatingsystem ? {
-	    'CentOS' => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/share/lmod/lmod/libexec/" ],
-	    'Debian' => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/share/lmod/lmod/libexec/" ],
-    }
+  # Path for the commands
+  $path = $::operatingsystem ? {
+    'CentOS' => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/',
+    '/usr/share/lmod/lmod/libexec/'
+    ],
+    'Debian' => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/',
+    '/usr/share/lmod/lmod/libexec/'
+    ],
+  }
 
-    # Branch of the git repository to pull for the configuration file
-    $branch = $::operatingsystem ? {
-	    'CentOS' => 'master',
-	    'Debian' => 'master',
-    }
+  # Branch of the git repository to pull for the configuration file
+  $branch = $::operatingsystem ? {
+    'CentOS' => 'master',
+    'Debian' => 'master',
+  }
 
-    # File to source (depend on the module command used)
-    $moduleSource = $::operatingsystem ? {
-	    'CentOS' => '/usr/share/lmod/lmod/init/profile',
-	    'Debian' => '/usr/share/lmod/lmod/init/profile',
-    }
+  # File to source (depend on the module command used)
+  $moduleSource = $::operatingsystem ? {
+    'CentOS' => '/usr/share/lmod/lmod/init/profile',
+    'Debian' => '/usr/share/lmod/lmod/init/profile',
+  }
 
-    # Package that provide the module command
-    $modulePackage = $::operatingsystem ? {
-	    'CentOS' => 'Lmod',
-	    'Debian' => 'lmod',
-    }
+  # Package that provide the module command
+  $modulePackage = $::operatingsystem ? {
+    'CentOS' => 'Lmod',
+    'Debian' => 'lmod',
+  }
 
-    $installOptions = $::operatingsystem ? {
-	    'CentOS' => '--enablerepo=epel-testing',
-	    'Debian' => [ '-t', 'sid' ],
-    }
-
+  $installOptions = $::operatingsystem ? {
+    'CentOS' => '--enablerepo=epel-testing',
+    'Debian' => [ '-t', 'sid' ],
+  }
 }
 
