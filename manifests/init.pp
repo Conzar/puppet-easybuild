@@ -40,7 +40,10 @@
 # [Remember: No empty lines between comments and class definition]
 #
 class easybuild(
-    $ensure = $easybuild::params::ensure
+  $ensure            = $easybuild::params::ensure,
+  $softwares         = $easybuild::params::softwares,
+  $branch            = 'core',
+  $easybuild_version = ''
 )
 inherits easybuild::params {
   anchor{'easybuild::begin':}
@@ -51,9 +54,14 @@ inherits easybuild::params {
   "easybuild 'ensure' parameter must be set to either 'absent' or 'present'")
   }
 
-  class{'easybuild::common':}
+  class{'easybuild::install':
+    require => Anchor['easybuild::begin'],
+  }
+  class{'easybuild::config':
+    require => Class['easybuild::install'],
+  }
 
   anchor{'easybuild::end':
-    require => Class['easybuild::common'],
+    require => Class['easybuild::config'],
   }
 }
